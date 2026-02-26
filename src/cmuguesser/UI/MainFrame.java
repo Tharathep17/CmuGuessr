@@ -1,29 +1,43 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package cmuguesser.UI;
 
-/**
- *
- * @author user
- */
+
 import java.awt.*;
 import javax.swing.*;
+import cmuguesser.Controller.GameController;
+import cmuguesser.Model.Player;
 
 public class MainFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
+    private GameController controller;
+    int showPoint=00;
     private int x = -1;
     private int y = -1;
-    private Image pin = new ImageIcon(getClass().getResource("/cmuguesser/Image/pin_1.png")
+    private final Image pin = new ImageIcon(getClass().getResource("/cmuguesser/Image/pin_1.png")
 ).getImage();
+    
+    private Timer timer;
+    private int timeleft;
+    private boolean canClick = true;
+    private int realX;
+    private int realY;
+    
+    private int currentRound = 1;
+    private int maxRound = 5;
+    
+    public static boolean hard = false;
+    
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
+        
+        // logo app
+        ImageIcon logo = new ImageIcon(getClass().getResource("/cmuguesser/Image/logo.png"));
+        setIconImage(logo.getImage());
     }
 
     /**
@@ -39,7 +53,7 @@ public class MainFrame extends javax.swing.JFrame {
         home = new javax.swing.JPanel();
         logo = new javax.swing.JLabel();
         name = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        textName = new javax.swing.JTextField();
         start = new javax.swing.JButton();
         bg1 = new javax.swing.JLabel();
         home2 = new javax.swing.JPanel();
@@ -47,7 +61,48 @@ public class MainFrame extends javax.swing.JFrame {
         Hardcore = new javax.swing.JButton();
         bg2 = new javax.swing.JLabel();
         game = new javax.swing.JPanel();
+        time = new javax.swing.JLabel();
+        time1 = new javax.swing.JLabel();
         map = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        player = new javax.swing.JLabel();
+        point = new javax.swing.JLabel();
+        intPoint = new javax.swing.JLabel();
+        imageLocation = new javax.swing.JLabel();
+        result = new javax.swing.JPanel();
+        resultPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        mapResult = new javax.swing.JLabel(){
+            @Override
+            protected void paintComponent(Graphics g){
+                super.paintComponent(g);
+
+                if(x != -1 && y != -1){
+                    g.drawImage(pin, x - 20, y - 20, 40, 40, this);
+                }
+
+                if(realX != -1 && realY !=-1){
+                    g.setColor(Color.RED);
+                    g.fillOval(realX-6, realY-6, 10, 10);
+                }
+
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setStroke(new BasicStroke(3));
+                g2.setColor(Color.BLACK);
+                g2.drawLine(x, y, realX, realY);
+            }
+        };
+        nextRound = new javax.swing.JButton();
+        bg3 = new javax.swing.JLabel();
+        endGame = new javax.swing.JPanel();
+        resultPanel1 = new javax.swing.JPanel();
+        player1 = new javax.swing.JLabel();
+        intPoint1 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        bg4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CMUGuesser");
@@ -72,10 +127,11 @@ public class MainFrame extends javax.swing.JFrame {
         name.setText("Name :");
         home.add(name, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 740, -1, -1));
 
-        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        jTextField1.setForeground(new java.awt.Color(0, 0, 0));
-        home.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 740, 660, 80));
+        textName.setBackground(new java.awt.Color(255, 255, 255));
+        textName.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        textName.setForeground(new java.awt.Color(0, 0, 0));
+        textName.addActionListener(this::textNameActionPerformed);
+        home.add(textName, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 740, 660, 80));
 
         start.setBackground(new java.awt.Color(137, 101, 229));
         start.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
@@ -95,14 +151,14 @@ public class MainFrame extends javax.swing.JFrame {
         home2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         standard.setBackground(new java.awt.Color(255, 255, 255));
-        standard.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        standard.setFont(new java.awt.Font("Segoe UI", 1, 58)); // NOI18N
         standard.setForeground(new java.awt.Color(137, 101, 229));
         standard.setText("Standard");
         standard.addActionListener(this::standardActionPerformed);
         home2.add(standard, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 520, 430, 260));
 
         Hardcore.setBackground(new java.awt.Color(255, 255, 255));
-        Hardcore.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        Hardcore.setFont(new java.awt.Font("Segoe UI", 1, 58)); // NOI18N
         Hardcore.setForeground(new java.awt.Color(137, 101, 229));
         Hardcore.setText("Hardcore");
         Hardcore.addActionListener(this::HardcoreActionPerformed);
@@ -116,6 +172,17 @@ public class MainFrame extends javax.swing.JFrame {
 
         game.setMaximumSize(new java.awt.Dimension(1920, 1080));
         game.setPreferredSize(new java.awt.Dimension(1920, 1080));
+        game.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        time.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
+        time.setForeground(new java.awt.Color(255, 255, 255));
+        time.setText("20");
+        game.add(time, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 0, -1, -1));
+
+        time1.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
+        time1.setForeground(new java.awt.Color(255, 255, 255));
+        time1.setText("Time :");
+        game.add(time1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 0, -1, -1));
 
         map = new javax.swing.JLabel() {
             @Override
@@ -133,23 +200,192 @@ public class MainFrame extends javax.swing.JFrame {
                 mapMouseClicked(evt);
             }
         });
+        game.add(map, new org.netbeans.lib.awtextra.AbsoluteConstraints(1308, 376, -1, -1));
 
-        javax.swing.GroupLayout gameLayout = new javax.swing.GroupLayout(game);
-        game.setLayout(gameLayout);
-        gameLayout.setHorizontalGroup(
-            gameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, gameLayout.createSequentialGroup()
-                .addGap(0, 1307, Short.MAX_VALUE)
-                .addComponent(map))
+        jPanel1.setBackground(new java.awt.Color(137, 101, 229));
+        jPanel1.setForeground(new java.awt.Color(137, 101, 229));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 360, Short.MAX_VALUE)
         );
-        gameLayout.setVerticalGroup(
-            gameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, gameLayout.createSequentialGroup()
-                .addGap(0, 311, Short.MAX_VALUE)
-                .addComponent(map))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
         );
+
+        game.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 360, -1));
+
+        jPanel2.setBackground(new java.awt.Color(137, 101, 229));
+        jPanel2.setForeground(new java.awt.Color(137, 101, 229));
+
+        player.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
+        player.setForeground(new java.awt.Color(255, 255, 255));
+        player.setText("Unknow");
+
+        point.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
+        point.setForeground(new java.awt.Color(255, 255, 255));
+        point.setText("Score :");
+
+        intPoint.setBackground(new java.awt.Color(255, 255, 255));
+        intPoint.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
+        intPoint.setForeground(new java.awt.Color(255, 255, 255));
+        intPoint.setText("00");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(47, 47, 47)
+                .addComponent(player)
+                .addGap(86, 86, 86)
+                .addComponent(point)
+                .addGap(18, 18, 18)
+                .addComponent(intPoint)
+                .addContainerGap(152, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(player)
+                    .addComponent(point)
+                    .addComponent(intPoint))
+                .addGap(0, 8, Short.MAX_VALUE))
+        );
+
+        game.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 0, 860, -1));
+
+        imageLocation.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/maps/ang_kaew.jpg"))); // NOI18N
+        game.add(imageLocation, new org.netbeans.lib.awtextra.AbsoluteConstraints(-11, -5, 1930, 1090));
 
         MainPage.add(game, "game");
+
+        result.setMaximumSize(new java.awt.Dimension(1920, 1080));
+        result.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        resultPanel.setBackground(new java.awt.Color(137, 101, 229));
+        resultPanel.setForeground(new java.awt.Color(137, 101, 229));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("points");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("You were 0.25 km away");
+
+        javax.swing.GroupLayout resultPanelLayout = new javax.swing.GroupLayout(resultPanel);
+        resultPanel.setLayout(resultPanelLayout);
+        resultPanelLayout.setHorizontalGroup(
+            resultPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(resultPanelLayout.createSequentialGroup()
+                .addGap(126, 126, 126)
+                .addGroup(resultPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(resultPanelLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel2))
+                    .addComponent(jLabel1))
+                .addContainerGap(133, Short.MAX_VALUE))
+        );
+        resultPanelLayout.setVerticalGroup(
+            resultPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(resultPanelLayout.createSequentialGroup()
+                .addContainerGap(42, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addGap(52, 52, 52))
+        );
+
+        result.add(resultPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 800, 680, 240));
+
+        mapResult.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cmuguesser/Image/map.png"))); // NOI18N
+        mapResult.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                mapResultMouseClicked(evt);
+            }
+        });
+        result.add(mapResult, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 70, -1, -1));
+
+        nextRound.setBackground(new java.awt.Color(137, 101, 229));
+        nextRound.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        nextRound.setForeground(new java.awt.Color(255, 255, 255));
+        nextRound.setText("Next");
+        nextRound.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                nextRoundMouseClicked(evt);
+            }
+        });
+        result.add(nextRound, new org.netbeans.lib.awtextra.AbsoluteConstraints(1640, 960, 260, -1));
+
+        bg3.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        bg3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/maps/ang_kaew.jpg"))); // NOI18N
+        result.add(bg3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
+        MainPage.add(result, "result");
+
+        endGame.setMaximumSize(new java.awt.Dimension(1920, 1080));
+        endGame.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        resultPanel1.setBackground(new java.awt.Color(137, 101, 229));
+        resultPanel1.setForeground(new java.awt.Color(137, 101, 229));
+
+        player1.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
+        player1.setForeground(new java.awt.Color(255, 255, 255));
+        player1.setText("Unknow");
+
+        intPoint1.setBackground(new java.awt.Color(255, 255, 255));
+        intPoint1.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
+        intPoint1.setForeground(new java.awt.Color(255, 255, 255));
+        intPoint1.setText("00");
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Total Score :");
+
+        javax.swing.GroupLayout resultPanel1Layout = new javax.swing.GroupLayout(resultPanel1);
+        resultPanel1.setLayout(resultPanel1Layout);
+        resultPanel1Layout.setHorizontalGroup(
+            resultPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(resultPanel1Layout.createSequentialGroup()
+                .addGroup(resultPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(resultPanel1Layout.createSequentialGroup()
+                        .addGap(247, 247, 247)
+                        .addComponent(player1))
+                    .addGroup(resultPanel1Layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(jLabel5)
+                        .addGap(46, 46, 46)
+                        .addComponent(intPoint1)))
+                .addContainerGap(191, Short.MAX_VALUE))
+        );
+        resultPanel1Layout.setVerticalGroup(
+            resultPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(resultPanel1Layout.createSequentialGroup()
+                .addGap(36, 36, 36)
+                .addComponent(player1)
+                .addGap(104, 104, 104)
+                .addGroup(resultPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(intPoint1))
+                .addContainerGap(196, Short.MAX_VALUE))
+        );
+
+        endGame.add(resultPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 300, 740, 520));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 98)); // NOI18N
+        jLabel3.setText("!! Congratulations !!");
+        endGame.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 120, -1, -1));
+
+        bg4.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        bg4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/maps/ang_kaew.jpg"))); // NOI18N
+        endGame.add(bg4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
+        MainPage.add(endGame, "endGame");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -165,28 +401,157 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+    public boolean getMode(){return hard;}
+    
+    private void nextRound(){
+        canClick = true;
+        
+        if(currentRound < maxRound){
+            currentRound += 1;
+            
+            x = -1;
+            y = -1;
+            realX = -1;
+            realY = -1;
+        
+            controller.randomLocation();
+            startTime();
+        
+            String imageName = controller.getCurrentLocation().getName();
+            ImageIcon icon = new ImageIcon(getClass().getResource("/resource/maps/" + imageName));
+        
+            imageLocation.setIcon(icon);
+            bg3.setIcon(icon);
+        
+            CardLayout cl =  (CardLayout) MainPage.getLayout();
+            cl.show(MainPage, "game");
+        }
+        else{
+            CardLayout cl = (CardLayout) MainPage.getLayout();
+            cl.show(MainPage, "endGame");
+        }
+
+    }
+    
+    private double calcDistance(int x1, int y1, int x2, int y2){
+        int dx = x1 - x2;
+        int dy = y1 - y2;
+        
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+    
+    private void startTime(){
+        CardLayout cl = (CardLayout) MainPage.getLayout();
+        if(hard == true){timeleft = 10;}
+        else{timeleft = 20;}
+        
+        time.setText(String.valueOf(timeleft));
+        
+        timer = new Timer(1000, e ->{
+            timeleft -=1; time.setText(String.valueOf(timeleft));
+            
+            if(timeleft == 0){
+                timer.stop();
+                canClick = false;
+                
+                int score = 0;
+                if(x != -1 && y != -1){
+                    score = controller.calcScore(x, y);
+                    showPoint += score;
+                }
+                
+                intPoint.setText(String.valueOf(showPoint));
+                jLabel1.setText(score + " Points");
+                intPoint1.setText(String.valueOf(showPoint));
+                
+                realX = controller.getCurrentLocation().getX();
+                realY = controller.getCurrentLocation().getY();
+                mapResult.repaint();
+                
+                double dis = calcDistance(x, y, realX, realY);
+                jLabel2.setText(String.format("You were %.2f pixel away!", dis));
+                
+                cl.show(MainPage, "result");
+            }
+        
+        });
+        timer.start();
+    }
     
     private void startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startActionPerformed
+        String playerName = textName.getText();
+        
+        if(playerName.isEmpty()){playerName = "Unknow";}
+        
+        player.setText(playerName);
+        player1.setText(playerName);
+        
+        
+        Player player = new Player(playerName);
+        controller = new GameController(player);
+        controller.loadMap("/resource/data/Location.txt");
+        
         CardLayout cl = (CardLayout) MainPage.getLayout();
         cl.show(MainPage, "home2");
     }//GEN-LAST:event_startActionPerformed
 
     private void standardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_standardActionPerformed
+
+        controller.randomLocation();
+        startTime();
+        
+        String imageName = controller.getCurrentLocation().getName();
+        
+        ImageIcon icon = new ImageIcon(getClass().getResource("/resource/maps/" + imageName));
+        imageLocation.setIcon(icon);
+        bg3.setIcon(icon);
+        
+        
         CardLayout cl = (CardLayout) MainPage.getLayout();
         cl.show(MainPage, "game");
     }//GEN-LAST:event_standardActionPerformed
 
     private void HardcoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HardcoreActionPerformed
-        // TODO add your handling code here:
+        hard = true;
+        controller.randomLocation();
+        startTime();
+        
+        String imageName = controller.getCurrentLocation().getName();
+        
+        ImageIcon icon = new ImageIcon(getClass().getResource("/resource/maps/" + imageName));
+        imageLocation.setIcon(icon);
+        bg3.setIcon(icon);
+        
+        
+        CardLayout cl = (CardLayout) MainPage.getLayout();
+        cl.show(MainPage, "game");
     }//GEN-LAST:event_HardcoreActionPerformed
 
     private void mapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mapMouseClicked
+        
+        if(!canClick){return;}
+        
         x = evt.getX();
         y = evt.getY();
+
+        //intPoint.setText(String.valueOf(showPoint));
         
-        System.out.println(x + " " + y);
+        //System.out.println(x + " " + y);
         map.repaint();
     }//GEN-LAST:event_mapMouseClicked
+
+    private void textNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textNameActionPerformed
+        
+    }//GEN-LAST:event_textNameActionPerformed
+
+    private void mapResultMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mapResultMouseClicked
+
+        
+    }//GEN-LAST:event_mapResultMouseClicked
+
+    private void nextRoundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextRoundMouseClicked
+        nextRound();
+    }//GEN-LAST:event_nextRoundMouseClicked
 
     /**
      * @param args the command line arguments
@@ -218,14 +583,36 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel MainPage;
     private javax.swing.JLabel bg1;
     private javax.swing.JLabel bg2;
+    private javax.swing.JLabel bg3;
+    private javax.swing.JLabel bg4;
+    private javax.swing.JPanel endGame;
     private javax.swing.JPanel game;
     private javax.swing.JPanel home;
     private javax.swing.JPanel home2;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel imageLocation;
+    private javax.swing.JLabel intPoint;
+    private javax.swing.JLabel intPoint1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel logo;
     private javax.swing.JLabel map;
+    private javax.swing.JLabel mapResult;
     private javax.swing.JLabel name;
+    private javax.swing.JButton nextRound;
+    private javax.swing.JLabel player;
+    private javax.swing.JLabel player1;
+    private javax.swing.JLabel point;
+    private javax.swing.JPanel result;
+    private javax.swing.JPanel resultPanel;
+    private javax.swing.JPanel resultPanel1;
     private javax.swing.JButton standard;
     private javax.swing.JButton start;
+    private javax.swing.JTextField textName;
+    private javax.swing.JLabel time;
+    private javax.swing.JLabel time1;
     // End of variables declaration//GEN-END:variables
 }
