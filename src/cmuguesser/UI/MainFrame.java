@@ -24,7 +24,7 @@ public class MainFrame extends javax.swing.JFrame {
     private int realY;
     
     private int currentRound = 1;
-    private int maxRound = 5;
+    private int maxRound = 10;
     
     public static boolean hard = false;
     
