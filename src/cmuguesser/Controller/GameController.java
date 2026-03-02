@@ -31,7 +31,7 @@ public class GameController {
     }
     
     public int calcScore(int clickX, int clickY){
-        if(MainFrame.hard == true){max_distance = 100;}
+        if(MainFrame.hard == true){max_distance = 50;}
         
         double distance = Math.sqrt(Math.pow(clickX - currentLocation.getX(), 2) + Math.pow(clickY - currentLocation.getY(), 2));
 

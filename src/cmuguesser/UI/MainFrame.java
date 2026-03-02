@@ -14,6 +14,7 @@ public class MainFrame extends javax.swing.JFrame {
     int showPoint=00;
     private int x = -1;
     private int y = -1;
+
     private final Image pin = new ImageIcon(getClass().getResource("/cmuguesser/Image/pin_1.png")
 ).getImage();
     
@@ -22,11 +23,16 @@ public class MainFrame extends javax.swing.JFrame {
     private boolean canClick = true;
     private int realX;
     private int realY;
+
     
     private int currentRound = 1;
     private int maxRound = 10;
     
     public static boolean hard = false;
+    
+    private boolean showHint = false;
+    private int hintRemain = 3;
+    private int disHint = 80;
     
 
     /**
@@ -61,6 +67,7 @@ public class MainFrame extends javax.swing.JFrame {
         Hardcore = new javax.swing.JButton();
         bg2 = new javax.swing.JLabel();
         game = new javax.swing.JPanel();
+        hintbutt = new javax.swing.JButton();
         time = new javax.swing.JLabel();
         time1 = new javax.swing.JLabel();
         map = new javax.swing.JLabel();
@@ -79,13 +86,19 @@ public class MainFrame extends javax.swing.JFrame {
             protected void paintComponent(Graphics g){
                 super.paintComponent(g);
 
+                //int drawX = (int) (percentX * map.getWidth());
+                //int drawY = (int) (percentY * map.getHeight());
+
+                //int realDrawX = (int) (realPercentX * map.getWidth());
+                //int realDrawY = (int) (realPercentY * map.getHeight());
+
                 if(x != -1 && y != -1){
-                    g.drawImage(pin, x - 20, y - 20, 40, 40, this);
+                    g.drawImage(pin, x -20, y -20, 40, 40, this);
                 }
 
                 if(realX != -1 && realY !=-1){
                     g.setColor(Color.RED);
-                    g.fillOval(realX-6, realY-6, 10, 10);
+                    g.fillOval(realX -6, realY-6, 10, 10);
                 }
 
                 Graphics2D g2 = (Graphics2D) g;
@@ -97,6 +110,7 @@ public class MainFrame extends javax.swing.JFrame {
         nextRound = new javax.swing.JButton();
         bg3 = new javax.swing.JLabel();
         endGame = new javax.swing.JPanel();
+        rebutt = new javax.swing.JButton();
         resultPanel1 = new javax.swing.JPanel();
         player1 = new javax.swing.JLabel();
         intPoint1 = new javax.swing.JLabel();
@@ -108,6 +122,7 @@ public class MainFrame extends javax.swing.JFrame {
         setTitle("CMUGuesser");
         setMaximumSize(new java.awt.Dimension(1920, 1080));
         setMinimumSize(new java.awt.Dimension(1920, 1080));
+        setResizable(false);
 
         MainPage.setMaximumSize(new java.awt.Dimension(1920, 1080));
         MainPage.setMinimumSize(new java.awt.Dimension(1920, 1080));
@@ -171,8 +186,16 @@ public class MainFrame extends javax.swing.JFrame {
         MainPage.add(home2, "home2");
 
         game.setMaximumSize(new java.awt.Dimension(1920, 1080));
+        game.setMinimumSize(new java.awt.Dimension(1920, 1080));
         game.setPreferredSize(new java.awt.Dimension(1920, 1080));
         game.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        hintbutt.setBackground(new java.awt.Color(137, 101, 229));
+        hintbutt.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        hintbutt.setForeground(new java.awt.Color(255, 255, 255));
+        hintbutt.setText("Hint (" + hintRemain + ")");
+        hintbutt.addActionListener(this::hintbuttActionPerformed);
+        game.add(hintbutt, new org.netbeans.lib.awtextra.AbsoluteConstraints(-10, 950, 250, 100));
 
         time.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
         time.setForeground(new java.awt.Color(255, 255, 255));
@@ -188,9 +211,24 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-
+                if(hard){disHint = 100;}
+                realX = controller.getCurrentLocation().getX();
+                realY = controller.getCurrentLocation().getY();
                 if (x != -1 && y != -1) {
                     g.drawImage(pin, x - 20, y - 20, 40, 40, this);
+                }
+
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                if (showHint) {
+                    g2.setColor(new Color(255, 0, 0, 120));
+                    g2.fillOval(realX - disHint, realY - disHint, disHint*2, disHint*2);
+
+                    g2.setColor(Color.BLACK);
+                    g2.setStroke(new BasicStroke(2));
+                    g2.drawOval(realX - disHint, realY - disHint, disHint*2, disHint*2);
+
                 }
             }
         };
@@ -200,7 +238,7 @@ public class MainFrame extends javax.swing.JFrame {
                 mapMouseClicked(evt);
             }
         });
-        game.add(map, new org.netbeans.lib.awtextra.AbsoluteConstraints(1308, 376, -1, -1));
+        game.add(map, new org.netbeans.lib.awtextra.AbsoluteConstraints(1310, 410, 620, 670));
 
         jPanel1.setBackground(new java.awt.Color(137, 101, 229));
         jPanel1.setForeground(new java.awt.Color(137, 101, 229));
@@ -223,7 +261,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         player.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
         player.setForeground(new java.awt.Color(255, 255, 255));
-        player.setText("Unknow");
+        player.setText("Unknown");
 
         point.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
         point.setForeground(new java.awt.Color(255, 255, 255));
@@ -245,7 +283,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(point)
                 .addGap(18, 18, 18)
                 .addComponent(intPoint)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addContainerGap(111, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -309,7 +347,7 @@ public class MainFrame extends javax.swing.JFrame {
                 mapResultMouseClicked(evt);
             }
         });
-        result.add(mapResult, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 70, -1, -1));
+        result.add(mapResult, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 70, 620, 670));
 
         nextRound.setBackground(new java.awt.Color(137, 101, 229));
         nextRound.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
@@ -331,12 +369,19 @@ public class MainFrame extends javax.swing.JFrame {
         endGame.setMaximumSize(new java.awt.Dimension(1920, 1080));
         endGame.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        rebutt.setBackground(new java.awt.Color(137, 101, 229));
+        rebutt.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        rebutt.setForeground(new java.awt.Color(255, 255, 255));
+        rebutt.setText("Play Again");
+        rebutt.addActionListener(this::rebuttActionPerformed);
+        endGame.add(rebutt, new org.netbeans.lib.awtextra.AbsoluteConstraints(1470, 930, 340, 100));
+
         resultPanel1.setBackground(new java.awt.Color(137, 101, 229));
         resultPanel1.setForeground(new java.awt.Color(137, 101, 229));
 
         player1.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
         player1.setForeground(new java.awt.Color(255, 255, 255));
-        player1.setText("Unknow");
+        player1.setText("Unknown");
 
         intPoint1.setBackground(new java.awt.Color(255, 255, 255));
         intPoint1.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
@@ -361,7 +406,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(jLabel5)
                         .addGap(46, 46, 46)
                         .addComponent(intPoint1)))
-                .addContainerGap(191, Short.MAX_VALUE))
+                .addContainerGap(187, Short.MAX_VALUE))
         );
         resultPanel1Layout.setVerticalGroup(
             resultPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -378,6 +423,7 @@ public class MainFrame extends javax.swing.JFrame {
         endGame.add(resultPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 300, 740, 520));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 98)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("!! Congratulations !!");
         endGame.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 120, -1, -1));
 
@@ -401,8 +447,33 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+    // change ModeGame
     public boolean getMode(){return hard;}
     
+    // resetGame
+    private void resetGame(){
+
+        showPoint = 0;
+        currentRound = 1;
+
+        x = -1;
+        y = -1;
+        realX = -1;
+        realY = -1;
+
+        hard = false;
+
+        hintRemain = 3;
+        hintbutt.setEnabled(true);
+        hintbutt.setText("Hint (3)");
+
+        intPoint.setText("0");
+        intPoint1.setText("0");
+
+        canClick = true;
+    }
+    
+    // nextRound
     private void nextRound(){
         canClick = true;
         
@@ -433,6 +504,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     }
     
+    // calculate distance (answer with realAnswer)
     private double calcDistance(int x1, int y1, int x2, int y2){
         int dx = x1 - x2;
         int dy = y1 - y2;
@@ -440,6 +512,7 @@ public class MainFrame extends javax.swing.JFrame {
         return Math.sqrt(dx * dx + dy * dy);
     }
     
+    // count Time (20-0)
     private void startTime(){
         CardLayout cl = (CardLayout) MainPage.getLayout();
         if(hard == true){timeleft = 10;}
@@ -448,8 +521,8 @@ public class MainFrame extends javax.swing.JFrame {
         time.setText(String.valueOf(timeleft));
         
         timer = new Timer(1000, e ->{
-            timeleft -=1; time.setText(String.valueOf(timeleft));
-            
+        timeleft -=1; time.setText(String.valueOf(timeleft));
+        
             if(timeleft == 0){
                 timer.stop();
                 canClick = false;
@@ -478,10 +551,11 @@ public class MainFrame extends javax.swing.JFrame {
         timer.start();
     }
     
+    // Action StartButton
     private void startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startActionPerformed
         String playerName = textName.getText();
         
-        if(playerName.isEmpty()){playerName = "Unknow";}
+        if(playerName.isEmpty()){playerName = "Unknown";}
         
         player.setText(playerName);
         player1.setText(playerName);
@@ -495,6 +569,7 @@ public class MainFrame extends javax.swing.JFrame {
         cl.show(MainPage, "home2");
     }//GEN-LAST:event_startActionPerformed
 
+    // Action StandardButton (Mode)
     private void standardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_standardActionPerformed
 
         controller.randomLocation();
@@ -511,7 +586,10 @@ public class MainFrame extends javax.swing.JFrame {
         cl.show(MainPage, "game");
     }//GEN-LAST:event_standardActionPerformed
 
+    // Action HardcoreButton (Mode)
     private void HardcoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HardcoreActionPerformed
+        hintRemain = 1;
+        hintbutt.setText("Hint (" + hintRemain + ")");
         hard = true;
         controller.randomLocation();
         startTime();
@@ -527,16 +605,18 @@ public class MainFrame extends javax.swing.JFrame {
         cl.show(MainPage, "game");
     }//GEN-LAST:event_HardcoreActionPerformed
 
+    // Action getX, Y in map
     private void mapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mapMouseClicked
-        
         if(!canClick){return;}
         
         x = evt.getX();
         y = evt.getY();
-
-        //intPoint.setText(String.valueOf(showPoint));
         
-        //System.out.println(x + " " + y);
+        realX = controller.getCurrentLocation().getX();
+        realY = controller.getCurrentLocation().getY();
+
+        
+        System.out.println(x + " " + y);
         map.repaint();
     }//GEN-LAST:event_mapMouseClicked
 
@@ -549,13 +629,45 @@ public class MainFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_mapResultMouseClicked
 
+    // Action nextButton (go to nextRound)
     private void nextRoundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextRoundMouseClicked
         nextRound();
     }//GEN-LAST:event_nextRoundMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
+    // Action hintButton (showHint in map)
+    private void hintbuttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hintbuttActionPerformed
+        
+        if(hintRemain <= 0){
+            hintbutt.setEnabled(false);
+            return;
+        }
+        
+        hintRemain -= 1;
+        hintbutt.setText("Hint (" + hintRemain + ")");
+        showHint = true;
+        map.repaint();
+        
+        Timer timer = new Timer(1500, event -> {
+            showHint = false;
+            map.repaint();
+        });
+        
+        timer.setRepeats(false);
+        timer.start();
+        if (hintRemain <= 0) {
+            hintbutt.setEnabled(false);
+        }
+    }//GEN-LAST:event_hintbuttActionPerformed
+
+    // Action playAgainButton (resetGame go to home2)
+    private void rebuttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rebuttActionPerformed
+        resetGame();
+        
+        CardLayout cl = (CardLayout) MainPage.getLayout();
+        cl.show(MainPage, "home2");
+    }//GEN-LAST:event_rebuttActionPerformed
+
+    // **********MAIN************
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -587,6 +699,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel bg4;
     private javax.swing.JPanel endGame;
     private javax.swing.JPanel game;
+    private javax.swing.JButton hintbutt;
     private javax.swing.JPanel home;
     private javax.swing.JPanel home2;
     private javax.swing.JLabel imageLocation;
@@ -606,6 +719,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel player;
     private javax.swing.JLabel player1;
     private javax.swing.JLabel point;
+    private javax.swing.JButton rebutt;
     private javax.swing.JPanel result;
     private javax.swing.JPanel resultPanel;
     private javax.swing.JPanel resultPanel1;
