@@ -34,6 +34,8 @@ public class MainFrame extends javax.swing.JFrame {
     private int hintRemain = 3;
     private int disHint = 80;
     
+    private int chapter = 1;
+    
 
     /**
      * Creates new form MainFrame
@@ -73,6 +75,7 @@ public class MainFrame extends javax.swing.JFrame {
         map = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        chapText = new javax.swing.JLabel();
         player = new javax.swing.JLabel();
         point = new javax.swing.JLabel();
         intPoint = new javax.swing.JLabel();
@@ -259,6 +262,10 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(137, 101, 229));
         jPanel2.setForeground(new java.awt.Color(137, 101, 229));
 
+        chapText.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
+        chapText.setForeground(new java.awt.Color(255, 255, 255));
+        chapText.setText( chapter + "/10");
+
         player.setFont(new java.awt.Font("Segoe UI", 1, 68)); // NOI18N
         player.setForeground(new java.awt.Color(255, 255, 255));
         player.setText("Unknown");
@@ -277,25 +284,28 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(player)
-                .addGap(86, 86, 86)
+                .addContainerGap()
+                .addComponent(chapText, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(player, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addComponent(point)
                 .addGap(18, 18, 18)
                 .addComponent(intPoint)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addGap(33, 33, 33))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(player)
                     .addComponent(point)
-                    .addComponent(intPoint))
-                .addGap(0, 8, Short.MAX_VALUE))
+                    .addComponent(intPoint)
+                    .addComponent(player)
+                    .addComponent(chapText))
+                .addGap(0, 22, Short.MAX_VALUE))
         );
 
-        game.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1060, 0, 860, -1));
+        game.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 0, 1120, -1));
 
         imageLocation.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/maps/ang_kaew.jpg"))); // NOI18N
         game.add(imageLocation, new org.netbeans.lib.awtextra.AbsoluteConstraints(-11, -5, 1930, 1090));
@@ -484,13 +494,12 @@ public class MainFrame extends javax.swing.JFrame {
             y = -1;
             realX = -1;
             realY = -1;
-        
+            
             controller.randomLocation();
             startTime();
         
             String imageName = controller.getCurrentLocation().getName();
             ImageIcon icon = new ImageIcon(getClass().getResource("/resource/maps/" + imageName));
-        
             imageLocation.setIcon(icon);
             bg3.setIcon(icon);
         
@@ -498,6 +507,7 @@ public class MainFrame extends javax.swing.JFrame {
             cl.show(MainPage, "game");
         }
         else{
+            chapter = 1;
             CardLayout cl = (CardLayout) MainPage.getLayout();
             cl.show(MainPage, "endGame");
         }
@@ -519,6 +529,7 @@ public class MainFrame extends javax.swing.JFrame {
         else{timeleft = 20;}
         
         time.setText(String.valueOf(timeleft));
+        chapText.setText(chapter + "/10");
         
         timer = new Timer(1000, e ->{
         timeleft -=1; time.setText(String.valueOf(timeleft));
@@ -631,6 +642,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Action nextButton (go to nextRound)
     private void nextRoundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextRoundMouseClicked
+        chapter += 1;
         nextRound();
     }//GEN-LAST:event_nextRoundMouseClicked
 
@@ -697,6 +709,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel bg2;
     private javax.swing.JLabel bg3;
     private javax.swing.JLabel bg4;
+    private javax.swing.JLabel chapText;
     private javax.swing.JPanel endGame;
     private javax.swing.JPanel game;
     private javax.swing.JButton hintbutt;
