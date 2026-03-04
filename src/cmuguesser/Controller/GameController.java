@@ -11,7 +11,9 @@ import java.util.*;
 public class GameController {
     private final Player player;
     private List<Location> location;
+    private List<Location> allLocation;
     private Location currentLocation;
+    private int currentIndex = 0;
     
     private final int max_score = 1000;
     private double max_distance = 220.0;
@@ -21,13 +23,21 @@ public class GameController {
     }
     
     public void randomLocation(){
-        Random random = new Random();
-        currentLocation = location.get(random.nextInt(location.size()));
+        if(currentIndex < allLocation.size()){
+            currentLocation = allLocation.get(currentIndex);
+            currentIndex += 1;
+        }
+        else{
+            currentLocation = null;
+        }
     }
     
     public void loadMap(String filePath){
-        location = FileLoader.load(filePath);
-        randomLocation();
+        allLocation = FileLoader.load(filePath);
+        
+        Collections.shuffle(allLocation);
+        currentIndex = 0;
+        
     }
     
     public int calcScore(int clickX, int clickY){

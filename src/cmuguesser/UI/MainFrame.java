@@ -32,7 +32,7 @@ public class MainFrame extends javax.swing.JFrame {
     
     private boolean showHint = false;
     private int hintRemain = 3;
-    private int disHint = 80;
+    private int disHint = 110;
     
     private int chapter = 1;
     
@@ -104,10 +104,12 @@ public class MainFrame extends javax.swing.JFrame {
                     g.fillOval(realX -6, realY-6, 10, 10);
                 }
 
-                Graphics2D g2 = (Graphics2D) g;
-                g2.setStroke(new BasicStroke(3));
-                g2.setColor(Color.BLACK);
-                g2.drawLine(x, y, realX, realY);
+                if(x != -1 && y != -1){
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setStroke(new BasicStroke(3));
+                    g2.setColor(Color.BLACK);
+                    g2.drawLine(x, y, realX, realY);
+                }
             }
         };
         nextRound = new javax.swing.JButton();
@@ -214,7 +216,7 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                if(hard){disHint = 100;}
+                if(hard){disHint = 130;}
                 realX = controller.getCurrentLocation().getX();
                 realY = controller.getCurrentLocation().getY();
                 if (x != -1 && y != -1) {
@@ -284,15 +286,15 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(chapText, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
-                .addComponent(player, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                .addComponent(point)
+                .addComponent(chapText, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
+                .addComponent(player, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(point, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(intPoint)
-                .addGap(33, 33, 33))
+                .addContainerGap(131, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -357,7 +359,7 @@ public class MainFrame extends javax.swing.JFrame {
                 mapResultMouseClicked(evt);
             }
         });
-        result.add(mapResult, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 70, 620, 670));
+        result.add(mapResult, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 70, -1, 670));
 
         nextRound.setBackground(new java.awt.Color(137, 101, 229));
         nextRound.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
@@ -659,7 +661,7 @@ public class MainFrame extends javax.swing.JFrame {
         showHint = true;
         map.repaint();
         
-        Timer timer = new Timer(1500, event -> {
+        Timer timer = new Timer(1000, event -> {
             showHint = false;
             map.repaint();
         });

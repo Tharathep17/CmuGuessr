@@ -334,7 +334,7 @@
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="mapMouseClicked"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="map = new javax.swing.JLabel() {&#xa;    @Override&#xa;    protected void paintComponent(Graphics g) {&#xa;        super.paintComponent(g);&#xa;        if(hard){disHint = 100;}&#xa;        realX = controller.getCurrentLocation().getX();&#xa;        realY = controller.getCurrentLocation().getY();&#xa;        if (x != -1 &amp;&amp; y != -1) {&#xa;            g.drawImage(pin, x - 20, y - 20, 40, 40, this);&#xa;        }&#xa;        &#xa;        Graphics2D g2 = (Graphics2D) g;&#xa;        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);&#xa;&#xa;        if (showHint) {&#xa;            g2.setColor(new Color(255, 0, 0, 120));&#xa;            g2.fillOval(realX - disHint, realY - disHint, disHint*2, disHint*2);&#xa;&#xa;            g2.setColor(Color.BLACK);&#xa;            g2.setStroke(new BasicStroke(2));&#xa;            g2.drawOval(realX - disHint, realY - disHint, disHint*2, disHint*2);&#xa;            &#xa;            &#xa;        }&#xa;    }&#xa;};"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="map = new javax.swing.JLabel() {&#xa;    @Override&#xa;    protected void paintComponent(Graphics g) {&#xa;        super.paintComponent(g);&#xa;        if(hard){disHint = 130;}&#xa;        realX = controller.getCurrentLocation().getX();&#xa;        realY = controller.getCurrentLocation().getY();&#xa;        if (x != -1 &amp;&amp; y != -1) {&#xa;            g.drawImage(pin, x - 20, y - 20, 40, 40, this);&#xa;        }&#xa;        &#xa;        Graphics2D g2 = (Graphics2D) g;&#xa;        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);&#xa;&#xa;        if (showHint) {&#xa;            g2.setColor(new Color(255, 0, 0, 120));&#xa;            g2.fillOval(realX - disHint, realY - disHint, disHint*2, disHint*2);&#xa;&#xa;            g2.setColor(Color.BLACK);&#xa;            g2.setStroke(new BasicStroke(2));&#xa;            g2.drawOval(realX - disHint, realY - disHint, disHint*2, disHint*2);&#xa;            &#xa;            &#xa;        }&#xa;    }&#xa;};"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -389,15 +389,15 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="chapText" min="-2" pref="349" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                          <Component id="player" min="-2" pref="363" max="-2" attributes="0"/>
-                          <EmptySpace pref="32" max="32767" attributes="0"/>
-                          <Component id="point" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="intPoint" min="-2" max="-2" attributes="0"/>
+                          <Component id="chapText" min="-2" pref="248" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+                          <Component id="player" min="-2" pref="336" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="point" min="-2" pref="243" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="intPoint" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="131" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -577,11 +577,11 @@
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="mapResultMouseClicked"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JLabel(){&#xa;    @Override&#xa;    protected void paintComponent(Graphics g){&#xa;        super.paintComponent(g);&#xa;&#xa;        //int drawX = (int) (percentX * map.getWidth());&#xa;        //int drawY = (int) (percentY * map.getHeight());&#xa;&#xa;        //int realDrawX = (int) (realPercentX * map.getWidth());&#xa;        //int realDrawY = (int) (realPercentY * map.getHeight());&#xa;&#xa;        if(x != -1 &amp;&amp; y != -1){&#xa;            g.drawImage(pin, x -20, y -20, 40, 40, this);&#xa;        }&#xa;&#xa;        if(realX != -1 &amp;&amp; realY !=-1){&#xa;            g.setColor(Color.RED);&#xa;            g.fillOval(realX -6, realY-6, 10, 10);&#xa;        }&#xa;&#xa;        Graphics2D g2 = (Graphics2D) g;&#xa;        g2.setStroke(new BasicStroke(3));&#xa;        g2.setColor(Color.BLACK);&#xa;        g2.drawLine(x, y, realX, realY);&#xa;    }&#xa;}"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JLabel(){&#xa;    @Override&#xa;    protected void paintComponent(Graphics g){&#xa;        super.paintComponent(g);&#xa;&#xa;        //int drawX = (int) (percentX * map.getWidth());&#xa;        //int drawY = (int) (percentY * map.getHeight());&#xa;&#xa;        //int realDrawX = (int) (realPercentX * map.getWidth());&#xa;        //int realDrawY = (int) (realPercentY * map.getHeight());&#xa;&#xa;        if(x != -1 &amp;&amp; y != -1){&#xa;            g.drawImage(pin, x -20, y -20, 40, 40, this);&#xa;        }&#xa;&#xa;        if(realX != -1 &amp;&amp; realY !=-1){&#xa;            g.setColor(Color.RED);&#xa;            g.fillOval(realX -6, realY-6, 10, 10);&#xa;        }&#xa;        &#xa;        if(x != -1 &amp;&amp; y != -1){&#xa;            Graphics2D g2 = (Graphics2D) g;&#xa;            g2.setStroke(new BasicStroke(3));&#xa;            g2.setColor(Color.BLACK);&#xa;            g2.drawLine(x, y, realX, realY);&#xa;        }&#xa;    }&#xa;}"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="680" y="70" width="620" height="670"/>
+                  <AbsoluteConstraints x="680" y="70" width="-1" height="670"/>
                 </Constraint>
               </Constraints>
             </Component>
