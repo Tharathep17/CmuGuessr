@@ -6,6 +6,7 @@ import java.awt.*;
 import javax.swing.*;
 import cmuguesser.Controller.GameController;
 import cmuguesser.Model.Player;
+import cmuguesser.util.SoundPlayer;
 
 public class MainFrame extends javax.swing.JFrame {
     
@@ -23,7 +24,8 @@ public class MainFrame extends javax.swing.JFrame {
     private boolean canClick = true;
     private int realX;
     private int realY;
-
+    
+    private SoundPlayer soundPlayer = new SoundPlayer();
     
     private int currentRound = 1;
     private int maxRound = 10;
@@ -42,6 +44,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
+        soundPlayer.playBGM("game.wav");    //bgm sound
         
         // logo app
         ImageIcon logo = new ImageIcon(getClass().getResource("/cmuguesser/Image/logo.png"));
@@ -147,9 +150,7 @@ public class MainFrame extends javax.swing.JFrame {
         name.setText("Name :");
         home.add(name, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 740, -1, -1));
 
-        textName.setBackground(new java.awt.Color(255, 255, 255));
         textName.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        textName.setForeground(new java.awt.Color(0, 0, 0));
         textName.addActionListener(this::textNameActionPerformed);
         home.add(textName, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 740, 660, 80));
 
@@ -170,14 +171,12 @@ public class MainFrame extends javax.swing.JFrame {
         home2.setPreferredSize(new java.awt.Dimension(1920, 1080));
         home2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        standard.setBackground(new java.awt.Color(255, 255, 255));
         standard.setFont(new java.awt.Font("Segoe UI", 1, 58)); // NOI18N
         standard.setForeground(new java.awt.Color(137, 101, 229));
         standard.setText("Standard");
         standard.addActionListener(this::standardActionPerformed);
         home2.add(standard, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 520, 430, 260));
 
-        Hardcore.setBackground(new java.awt.Color(255, 255, 255));
         Hardcore.setFont(new java.awt.Font("Segoe UI", 1, 58)); // NOI18N
         Hardcore.setForeground(new java.awt.Color(137, 101, 229));
         Hardcore.setText("Hardcore");
@@ -512,6 +511,8 @@ public class MainFrame extends javax.swing.JFrame {
             chapter = 1;
             CardLayout cl = (CardLayout) MainPage.getLayout();
             cl.show(MainPage, "endGame");
+            
+            soundPlayer.play("end.wav");    //sound effect for final result
         }
 
     }
@@ -536,6 +537,11 @@ public class MainFrame extends javax.swing.JFrame {
         timer = new Timer(1000, e ->{
         timeleft -=1; time.setText(String.valueOf(timeleft));
         
+        //ticking sound for 5 seconds left
+        if (timeleft == 5) {
+            soundPlayer.play("ticking.wav");
+        }
+        
             if(timeleft == 0){
                 timer.stop();
                 canClick = false;
@@ -558,6 +564,7 @@ public class MainFrame extends javax.swing.JFrame {
                 jLabel2.setText(String.format("You were %.2f pixel away!", dis));
                 
                 cl.show(MainPage, "result");
+                soundPlayer.play("cheer.wav");  //sound effect after completing each location
             }
         
         });
@@ -594,6 +601,7 @@ public class MainFrame extends javax.swing.JFrame {
         imageLocation.setIcon(icon);
         bg3.setIcon(icon);
         
+        soundPlayer.stopBGM();  //stop bgm before start
         
         CardLayout cl = (CardLayout) MainPage.getLayout();
         cl.show(MainPage, "game");
@@ -613,6 +621,7 @@ public class MainFrame extends javax.swing.JFrame {
         imageLocation.setIcon(icon);
         bg3.setIcon(icon);
         
+        soundPlayer.stopBGM();  //stop bgm before start
         
         CardLayout cl = (CardLayout) MainPage.getLayout();
         cl.show(MainPage, "game");
@@ -676,6 +685,8 @@ public class MainFrame extends javax.swing.JFrame {
     // Action playAgainButton (resetGame go to home2)
     private void rebuttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rebuttActionPerformed
         resetGame();
+        
+        soundPlayer.playBGM("game.wav");
         
         CardLayout cl = (CardLayout) MainPage.getLayout();
         cl.show(MainPage, "home2");
